@@ -5,6 +5,9 @@
  */
 package emmtoexcel;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.UIManager;
 
 /**
@@ -217,7 +220,11 @@ public class MainFrame extends javax.swing.JFrame {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         System.out.println("opened");
         DAOEmm dao = new DAOEmm();
-
+        try {
+            System.err.println(" res " + dao.getInfoByRw("КБШ").getString(1));
+        } catch (SQLException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_formWindowOpened
 

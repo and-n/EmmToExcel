@@ -5,6 +5,7 @@
  */
 package emmtoexcel;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,6 +59,7 @@ public class MainFrame extends javax.swing.JFrame {
         jCheckBox19 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -221,7 +223,8 @@ public class MainFrame extends javax.swing.JFrame {
         System.out.println("opened");
         DAOEmm dao = new DAOEmm();
         try {
-            System.err.println(" res " + dao.getInfoByRw("КБШ").getString(1));
+            dao.getInfoByRw("");
+
         } catch (SQLException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }

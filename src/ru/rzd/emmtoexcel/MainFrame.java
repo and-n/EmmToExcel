@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package emmtoexcel;
+package ru.rzd.emmtoexcel;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import ru.rzd.emmtoexcel.logic.EmmLogic;
 
 /**
  *
@@ -18,6 +18,8 @@ import javax.swing.UIManager;
 public class MainFrame extends javax.swing.JFrame {
 
     static boolean ISCONSOLE;
+
+    private EmmLogic logic;
 
     /**
      * Creates new form MainFrame
@@ -68,6 +70,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton1.setText("Выгрузить выбранные ЗО");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Выберите Зону Ответственности");
@@ -101,6 +108,11 @@ public class MainFrame extends javax.swing.JFrame {
         jCheckBox15.setText("ЮУР");
 
         jButton2.setText("Полная выгрузка");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jCheckBox8.setText("ВСИБ");
 
@@ -221,15 +233,23 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         System.out.println("opened");
-        DAOEmm dao = new DAOEmm();
-        try {
-            dao.getInfoByRw("");
-
-        } catch (SQLException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        logic = new EmmLogic();
     }//GEN-LAST:event_formWindowOpened
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int[] in = new int[]{-1};
+        try {
+            logic.createFileWithData(in);
+        } catch (EmmToExcelException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(rootPane, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments

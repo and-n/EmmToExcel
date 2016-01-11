@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package emmtoexcel;
+package ru.rzd.emmtoexcel;
 
-import emmtoexcel.logic.MatrixString;
+import ru.rzd.emmtoexcel.logic.MatrixString;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -44,7 +44,7 @@ public class DAOEmm {
                 + "databaseName=espp-search-test;user=iDilok;password=georgina;";
         try {
             connection = DriverManager.getConnection(connectionUrl1);
-            statement = connection.prepareStatement("select B.name_railway,C.name_cts,D.name_code_service_new, E.name_system ,"
+            statement = connection.prepareStatement("select C.name_cts,B.name_railway,D.name_code_service_new, E.name_system ,"
                     + "F.system_full_name ,G.name_Arm ,A.key_word,I.name_group,L.name_time,J.name_group,M.name_time,"
                     + "O.name_template,H.name_group,T.name_priznak,P.name_AS_OZ,S.name_template,Q.name_AS_OZ,U.name_template,A.prim,A.reason "
                     + "FROM Main_Table A "
@@ -85,7 +85,7 @@ public class DAOEmm {
 //                }
 //            } else {
             System.out.println("Нет коннекта к базе! ");
-            connect();
+//            connect();
 //            }
         }
     }
@@ -100,8 +100,8 @@ public class DAOEmm {
         }
         MatrixString ms = new MatrixString();
         while (rs.next()) {
-            ms.setCts(rs.getString(2));
-            ms.setZO(rs.getString(1));
+            ms.setCts(rs.getString(1));
+            ms.setZO(rs.getString(2));
             ms.setCode(rs.getString(3));
             ms.setSystem(rs.getString(4));
             ms.setARM(rs.getString(5));
@@ -122,4 +122,10 @@ public class DAOEmm {
         return list;
     }
 
+    public ResultSet getInfoByRwRS(String railWayName) throws SQLException {
+        statement.clearParameters();
+        statement.setString(1, railWayName);
+        ResultSet rs = statement.executeQuery();
+        return rs;
+    }
 }

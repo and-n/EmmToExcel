@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package emmtoexcel.logic;
+package ru.rzd.emmtoexcel.logic;
 
 import java.util.Objects;
 

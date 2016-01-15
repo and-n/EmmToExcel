@@ -66,7 +66,7 @@ public class DAOEmm {
                     + "Left Join Templates S              on S.id_template=A.id_template_zapros "
                     + "Left Join AS_OZ Q              on Q.id_AS_OZ=A.id_AS_OZ_naryad "
                     + "Left Join Templates U              on U.id_template=A.id_template_naryad "
-                    + "where B.name_railway=? order by D.name_code_service_new");
+                    + "where B.name_railway=? order by D.name_code_service_new, E.name_system");
 //            System.out.println(" " + connection.getSchema());
 //            statement = connection.prepareStatement("Select * from Railways");
         } catch (SQLException ex) {

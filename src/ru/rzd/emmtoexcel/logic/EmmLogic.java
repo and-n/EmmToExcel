@@ -1,7 +1,17 @@
 package ru.rzd.emmtoexcel.logic;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -26,8 +36,8 @@ public class EmmLogic {
     /**
      * Список Дорог (зон ответственности).
      */
-    public static final String[] ZO = new String[]{"ДВС", "ГОР", "ГВЦ", "КБШ", "КЛГ", "КРАСН",
-        "МСК", "ОКТ", "ПРИВ", "СЕВ", "СКВ", "СВРД", "ЮВСТ", "ЮУР", "ВСИБ", "ЗАБ", "ЗСИБ", "Все ЗО"};
+    public static final String[] ZO = new String[]{"Все ЗО", "ДВС", "ГОР", "ГВЦ", "КБШ", "КЛГ", "КРАСН",
+        "МСК", "ОКТ", "ПРИВ", "СЕВ", "СКВ", "СВРД", "ЮВСТ", "ЮУР", "ВСИБ", "ЗАБ", "ЗСИБ"};
 
     /**
      * Имена столбцов в экселе.
@@ -44,7 +54,6 @@ public class EmmLogic {
     private final DAOEmm dao;
 
     public EmmLogic() {
-        workbook = new SXSSFWorkbook(new XSSFWorkbook());
         dao = new DAOEmm();
     }
 
@@ -136,19 +145,54 @@ public class EmmLogic {
     }
 
     public void createFileWithData(int[] zoIndexes) throws EmmToExcelException {
+        workbook = new SXSSFWorkbook(new XSSFWorkbook());
         if (zoIndexes != null && zoIndexes.length > 0) {
             for (int index : zoIndexes) {
-                if (index != -1) {
+                if (index == -1) {
                     for (String s : ZO) {
                         Sheet sh = createSheetWithHeader(s);
                         addValuesIntoSheet(sh, s);
                     }
                 } else {
-
+                    throw new UnsupportedOperationException("Not supported yet.");
                 }
+            }
+            try {
+                // save File
+                saveFile(workbook);
+            } catch (IOException ex) {
+                Logger.getLogger(EmmLogic.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
+    }
+
+    private void saveFile(SXSSFWorkbook workbook) throws FileNotFoundException, IOException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = new Date();
+        String fileName = "ЭММ " + sdf.format(date);
+        String folder = "Result";
+        new File(folder).mkdir();
+
+        if (!folder.isEmpty()) {
+            FileOutputStream fos
+                    = new FileOutputStream(folder + File.separator + fileName + ".xlsx", false);
+            workbook.write(fos);
+            workbook.close();
+            fos.close();
+            System.out.println("save local");
+        }
+        String sharedFolder = "\\\\dvgd-sp-02.dvgd.oao.rzd\\sites\\espp-disp\\Shared Documents\\Резерв маршрутизации";
+//        new File(sharedFolder).mkdir();
+        try {
+            Path p = Files.copy(Paths.get(folder + File.separator + fileName + ".xlsx"),
+                    Paths.get(sharedFolder + File.separator + fileName + ".xlsx"), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("SAVE shared " + sharedFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Не могу сохранить на портал");
+        }
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

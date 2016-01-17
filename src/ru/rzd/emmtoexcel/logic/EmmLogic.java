@@ -136,7 +136,7 @@ public class EmmLogic {
                         row.createCell(ind).setCellValue(result.getString(ind + 1));
                     }
                 }
-
+                System.out.println(nameZO + " " + i);
             } catch (SQLException ex) {
                 Logger.getLogger(EmmLogic.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -144,7 +144,7 @@ public class EmmLogic {
 
     }
 
-    public void createFileWithData(int[] zoIndexes) throws EmmToExcelException {
+    public void createFileWithData(int[] zoIndexes) throws EmmToExcelException, IOException {
         workbook = new SXSSFWorkbook(new XSSFWorkbook());
         if (zoIndexes != null && zoIndexes.length > 0) {
             for (int index : zoIndexes) {
@@ -153,21 +153,21 @@ public class EmmLogic {
                         Sheet sh = createSheetWithHeader(s);
                         addValuesIntoSheet(sh, s);
                     }
+                    Path p = saveFileLocal(workbook);
+// TODO не забыть разкоментить строку сохранения на шару!!!                   
+// copyToShared(p);
+                    return;
                 } else {
-                    throw new UnsupportedOperationException("Not supported yet.");
+
                 }
             }
-            try {
-                // save File
-                saveFile(workbook);
-            } catch (IOException ex) {
-                Logger.getLogger(EmmLogic.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Path saveFileLocal = saveFileLocal(workbook);
+            System.out.println("save file " + saveFileLocal.toString());
         }
 
     }
 
-    private void saveFile(SXSSFWorkbook workbook) throws FileNotFoundException, IOException {
+    private Path saveFileLocal(SXSSFWorkbook workbook) throws FileNotFoundException, IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         Date date = new Date();
         String fileName = "ЭММ " + sdf.format(date);
@@ -182,17 +182,21 @@ public class EmmLogic {
             fos.close();
             System.out.println("save local");
         }
+        return Paths.get(folder + File.separator + fileName + ".xlsx");
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void copyToShared(Path local) {
         String sharedFolder = "\\\\dvgd-sp-02.dvgd.oao.rzd\\sites\\espp-disp\\Shared Documents\\Резерв маршрутизации";
 //        new File(sharedFolder).mkdir();
         try {
-            Path p = Files.copy(Paths.get(folder + File.separator + fileName + ".xlsx"),
-                    Paths.get(sharedFolder + File.separator + fileName + ".xlsx"), StandardCopyOption.REPLACE_EXISTING);
+            Path p = Files.copy(local,
+                    Paths.get(sharedFolder + File.separator + local.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
             System.out.println("SAVE shared " + sharedFolder);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Не могу сохранить на портал");
         }
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -41,7 +41,7 @@ public class DAOEmm {
         }
         // 10.58.1.96
         String connectionUrl1 = "jdbc:sqlserver://10.58.3.142;"
-                + "databaseName=espp-search-test;user=iDilok;password=georgina;";
+                + "databaseName=espp-search;user=iDilok;password=georgina;";
         try {
             connection = DriverManager.getConnection(connectionUrl1);
             statement = connection.prepareStatement("select C.name_cts,B.name_railway,D.name_code_service_new, E.name_system ,"
@@ -123,6 +123,14 @@ public class DAOEmm {
     }
 
     public ResultSet getInfoByRwRS(String railWayName) throws SQLException {
+        if (railWayName.equals("Все ЗО")) {
+            PreparedStatement ps = connection.prepareCall("select * from Railways where id_railway=18");
+            ResultSet r = ps.executeQuery();
+            System.out.println("r" + r.next());
+            int i = r.getInt(1);
+            String s = r.getString(2);
+            System.out.println("RSE" + s + "" + i);
+        }
         statement.clearParameters();
         statement.setString(1, railWayName);
         ResultSet rs = statement.executeQuery();

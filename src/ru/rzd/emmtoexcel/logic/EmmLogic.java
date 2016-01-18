@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -144,25 +145,28 @@ public class EmmLogic {
 
     }
 
-    public void createFileWithData(int[] zoIndexes) throws EmmToExcelException, IOException {
+    public void createFileWithData(List<String> zo) throws EmmToExcelException, IOException {
         workbook = new SXSSFWorkbook(new XSSFWorkbook());
-        if (zoIndexes != null && zoIndexes.length > 0) {
-            for (int index : zoIndexes) {
-                if (index == -1) {
-                    for (String s : ZO) {
-                        Sheet sh = createSheetWithHeader(s);
-                        addValuesIntoSheet(sh, s);
-                    }
-                    Path p = saveFileLocal(workbook);
-// TODO не забыть разкоментить строку сохранения на шару!!!                   
-// copyToShared(p);
-                    return;
-                } else {
-
+        if (zo != null) {
+            if (zo.isEmpty()) {
+                for (String s : ZO) {
+                    Sheet sh = createSheetWithHeader(s);
+                    addValuesIntoSheet(sh, s);
                 }
+                Path p = saveFileLocal(workbook);
+                System.out.println("save file " + p.toString());
+// TODO не забыть разкоментить строку сохранения на шару!!!                   
+                copyToShared(p);
+                return;
+            } else {
+                for (String s : zo) {
+                    Sheet sh = createSheetWithHeader(s);
+                    addValuesIntoSheet(sh, s);
+                }
+                saveFileLocal(workbook);
             }
-            Path saveFileLocal = saveFileLocal(workbook);
-            System.out.println("save file " + saveFileLocal.toString());
+//            Path saveFileLocal = saveFileLocal(workbook);
+
         }
 
     }
@@ -180,13 +184,13 @@ public class EmmLogic {
             workbook.write(fos);
             workbook.close();
             fos.close();
-            System.out.println("save local");
         }
+        System.out.println("save local");
         return Paths.get(folder + File.separator + fileName + ".xlsx");
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void copyToShared(Path local) {
+    private void copyToShared(Path local) throws IOException {
         String sharedFolder = "\\\\dvgd-sp-02.dvgd.oao.rzd\\sites\\espp-disp\\Shared Documents\\Резерв маршрутизации";
 //        new File(sharedFolder).mkdir();
         try {
@@ -196,6 +200,7 @@ public class EmmLogic {
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Не могу сохранить на портал");
+            throw new IOException("Не могу сохранить на портал");
         }
     }
 

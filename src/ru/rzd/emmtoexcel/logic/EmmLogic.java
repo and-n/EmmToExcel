@@ -194,14 +194,30 @@ public class EmmLogic {
         String sharedFolder = "\\\\dvgd-sp-02.dvgd.oao.rzd\\sites\\espp-disp\\Shared Documents\\Резерв маршрутизации";
 //        new File(sharedFolder).mkdir();
         try {
-            Path p = Files.copy(local,
-                    Paths.get(sharedFolder + File.separator + local.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("SAVE shared " + sharedFolder);
+            copy(local, sharedFolder);
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Не могу сохранить на портал");
-            throw new IOException("Не могу сохранить на портал");
+            System.err.println("FAIL on save to shared folder " + sharedFolder);
+            try {
+                sharedFolder = "\\\\dvgd-sp-02\\sites\\espp-disp\\Shared Documents\\Резерв маршрутизации";
+                copy(local, sharedFolder);
+            } catch (IOException s) {
+                System.err.println("FAIL on save to shared folder " + sharedFolder);
+                try {
+                    sharedFolder = "\\\\web.dvgd.oao.rzd\\sites\\espp-disp\\Shared Documents\\Резерв маршрутизации";
+                    copy(local, sharedFolder);
+                } catch (IOException a) {
+                    System.err.println("FAIL on save to shared folder " + sharedFolder);
+                    throw new IOException("FAIL on save to any shared folder");
+                }
+            }
+
         }
+    }
+
+    private void copy(Path local, String sharedFolder) throws IOException {
+        Path p = Files.copy(local,
+                Paths.get(sharedFolder + File.separator + "ЭММ.xlsx"), StandardCopyOption.REPLACE_EXISTING);
+        System.out.println("SAVE shared " + sharedFolder);
     }
 
 }

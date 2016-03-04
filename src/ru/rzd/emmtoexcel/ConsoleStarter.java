@@ -7,7 +7,6 @@ package ru.rzd.emmtoexcel;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ru.rzd.emmtoexcel.logic.EmmLogic;
@@ -24,7 +23,7 @@ public class ConsoleStarter {
         try {
             logic.createFileWithData(new ArrayList<String>());
         } catch (EmmToExcelException | IOException ex) {
-            System.err.println("ОШИБКА!");
+            System.err.println("ERROR!");
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
